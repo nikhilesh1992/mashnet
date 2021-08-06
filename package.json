@@ -27,7 +27,7 @@
   "homepage": "https://github.com/sharedstreets/mashnet#readme",
   "devDependencies": {
     "@mapbox/eslint-config-geocoding": "^2.0.2",
-    "chance": "^1.1.4",
+    "chance": "^1.1.7",
     "eslint": "^6.8.0",
     "eslint-plugin-node": "^11.0.0",
     "mkdirp": "^0.5.1",
@@ -39,14 +39,16 @@
     "@mapbox/graph-normalizer": "^3.1.1",
     "@mapbox/tile-cover": "^3.0.2",
     "@turf/turf": "^5.1.6",
-    "brain.js": "^2.0.0-alpha.9",
+    "brain.js": "^2.0.0-beta.2",
     "byline": "^5.0.0",
     "level": "^6.0.0",
     "level-mem": "^5.0.1",
     "minimist": "^1.2.0",
+    "node-gyp": "^8.1.0",
     "osm-pbf-parser": "^2.3.0",
     "rbush": "^3.0.1",
     "softmax-fn": "^1.0.8",
-    "through2": "^3.0.1"
+    "through2": "^3.0.1",
+    "turf-linestring": "^1.0.2"
   }
 }

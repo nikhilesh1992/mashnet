@@ -13,7 +13,7 @@ const UNITS = { units: "kilometers" };
 const TRAIN_COUNT = 10000;
 const ITERATIONS = 10000;
 
-const honolulu = require(path.join(__dirname, "./fixtures/honolulu.json"));
+const honolulu = require(path.join(__dirname, "../samples/here_atlas.json"));
 const chance = new Chance();
 const modelDir = path.join(__dirname, "../model/");
 const model = path.join(modelDir, "match.json");
@@ -24,10 +24,18 @@ var net = new Mashnet(honolulu);
 var samples = [];
 var i = 0;
 for (let edge of net.edges) {
-  i++;
-  console.log(i);
+  // console.log(i);
   if (i < TRAIN_COUNT) {
     var fake = perturb(net, edge[1]);
+    let fakeScores = net.scan(fake);
+
+    if (!fakeScores || fakeScores.length === 0){
+        continue;
+    }
+
+    i++;
+
+    console.log("Sample Created: " + i);
 
     if (chance.bool()) {
       // drop
@@ -38,44 +46,54 @@ for (let edge of net.edges) {
       });
 
       // match
-      const match = net.match(fake)[0];
-      if (match && match.score)
+      // const match = net.match(fakeScores);
+      if (fakeScores[0].score){
         samples.push({
           input: {
-            distance: match.distance,
-            scale: match.scale,
-            straight: match.straight,
-            curve: match.curve,
-            scan: match.scan,
-            terminal: match.terminal,
-            bearing: match.bearing,
-            softmax: match.softmax
+            distance: fakeScores[0].distance,
+            scale: fakeScores[0].scale,
+            straight: fakeScores[0].straight,
+            curve: fakeScores[0].curve,
+            scan: fakeScores[0].scan,
+            terminal: fakeScores[0].terminal,
+            bearing: fakeScores[0].bearing,
+            softmax: fakeScores[0].softmax
           },
           output: { match: 0 }
         });
+      }
+
 
       // reinsert
       net.edges.set(copy[0], copy[1]);
       net.edgetree.insert(treecopy(net, edge));
     } else {
       // match
-      const match = net.match(fake)[0];
+      // const match = net.match(fakeScores);
+        if (fakeScores[0].score) {
       samples.push({
         input: {
-          distance: match.distance,
-          scale: match.scale,
-          straight: match.straight,
-          curve: match.curve,
-          scan: match.scan,
-          terminal: match.terminal,
-          bearing: match.bearing,
-          softmax: match.softmax
+          distance: fakeScores[0].distance,
+          scale: fakeScores[0].scale,
+          straight: fakeScores[0].straight,
+          curve: fakeScores[0].curve,
+          scan: fakeScores[0].scan,
+          terminal: fakeScores[0].terminal,
+          bearing: fakeScores[0].bearing,
+          softmax: fakeScores[0].softmax
         },
         output: { match: 1 }
       });
     }
+    }
   }
 }
+
+console.log(samples.length);
+
+/*for(sample in samples){
+    console.log(sample);
+}*/
 
 const nn = new brain.NeuralNetwork();
 nn.train(samples, {
